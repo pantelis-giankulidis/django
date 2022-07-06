@@ -22,62 +22,62 @@ down the road.
 
 If you wish to use another database, install the appropriate database
 bindings <database-installation> and change the following keys in the
-:setting:`DATABASES` ``'default'`` item to match your database connection
-settings:
+`mysite/settings.py` `DATABASES` item to match your database connection
+settings,as in the example below:
 
-* :setting:`ENGINE <DATABASE-ENGINE>` -- Either
-  ``'django.db.backends.sqlite3'``,
-  ``'django.db.backends.postgresql'``,
-  ``'django.db.backends.mysql'``, or
-  ``'django.db.backends.oracle'``. Other backends are :ref:`also available
-  <third-party-notes>`.
+* DATABASES = { </br>
+  'default':{ </br>
+      &ensp; 'ENGINE': -- Either
+    ``'django.db.backends.sqlite3'``,
+      ``'django.db.backends.postgresql'``,
+    ``'django.db.backends.mysql'``, or
+    ``'django.db.backends.oracle'``, </br>
+      &ensp; 'NAME': -- the name of the database to use,</br>
+      &ensp; 'USER': -- the name of the database user to connect ,</br>
+      &ensp; 'PASSWORD': -- the password of the database user,</br>
+      &ensp; 'HOST':-- The host of the database,</br>
+      &ensp; 'PORT':-- The port of the database connection,</br>
+      &ensp; 'OPTIONS': -- Several custom options for the connection</br>
+  }
+} 
 
-* :setting:`NAME` -- The name of your database. If you're using SQLite, the
-  database will be a file on your computer; in that case, :setting:`NAME`
-  should be the full absolute path, including filename, of that file. The
-  default value, ``BASE_DIR / 'db.sqlite3'``, will store the file in your
-  project directory.
+For more details, see the reference documentation for `DATABASES`.
 
-If you are not using SQLite as your database, additional settings such as
-:setting:`USER`, :setting:`PASSWORD`, and :setting:`HOST` must be added.
-For more details, see the reference documentation for :setting:`DATABASES`.
-
-.. admonition:: For databases other than SQLite
 
     If you're using a database besides SQLite, make sure you've created a
-    database by this point. Do that with "``CREATE DATABASE database_name;``"
+    database by this point. Do that with `CREATE DATABASE database_name;`
     within your database's interactive prompt.
 
-    Also make sure that the database user provided in :file:`mysite/settings.py`
+    Also make sure that the database user provided in `mysite/settings.py`
     has "create database" privileges. This allows automatic creation of a
-    :ref:`test database <the-test-database>` which will be needed in a later
+    `test database <the-test-database>` which will be needed in a later
     tutorial.
 
     If you're using SQLite, you don't need to create anything beforehand - the
     database file will be created automatically when it is needed.
 
-While you're editing :file:`mysite/settings.py`, set :setting:`TIME_ZONE` to
-your time zone.
+While you're editing `mysite/settings.py`, set `TIME_ZONE` to
+your time zone.For example, for eastern American timezone, you can set `TIME_ZONE = "US/Eastern" `.
 
-Also, note the :setting:`INSTALLED_APPS` setting at the top of the file. That
+Also, note the `INSTALLED_APPS` setting at the top of the file. That
 holds the names of all Django applications that are activated in this Django
 instance. Apps can be used in multiple projects, and you can package and
 distribute them for use by others in their projects.
 
-By default, :setting:`INSTALLED_APPS` contains the following apps, all of which
+By default, `INSTALLED_APPS` contains the following apps, all of which
 come with Django:
 
-* :mod:`django.contrib.admin` -- The admin site. You'll use it shortly.
+* `django.contrib.admin` -- The admin site. You'll use it shortly.
 
-* :mod:`django.contrib.auth` -- An authentication system.
+* `django.contrib.auth` -- An authentication system.
 
-* :mod:`django.contrib.contenttypes` -- A framework for content types.
+* `django.contrib.contenttypes` -- A framework for content types.
 
-* :mod:`django.contrib.sessions` -- A session framework.
+* `django.contrib.sessions` -- A session framework.
 
-* :mod:`django.contrib.messages` -- A messaging framework.
+* `django.contrib.messages` -- A messaging framework.
 
-* :mod:`django.contrib.staticfiles` -- A framework for managing
+* `django.contrib.staticfiles` -- A framework for managing
   static files.
 
 These applications are included by default as a convenience for the common case.
@@ -86,41 +86,39 @@ Some of these applications make use of at least one database table, though,
 so we need to create the tables in the database before we can use them. To do
 that, run the following command:
 
-.. console::
 
     $ python manage.py migrate
 
-The :djadmin:`migrate` command looks at the :setting:`INSTALLED_APPS` setting
+The `migrate` command looks at the `INSTALLED_APPS` setting
 and creates any necessary database tables according to the database settings
-in your :file:`mysite/settings.py` file and the database migrations shipped
+in your `mysite/settings.py` file and the database migrations shipped
 with the app (we'll cover those later). You'll see a message for each
 migration it applies. If you're interested, run the command-line client for your
 database and type ``\dt`` (PostgreSQL), ``SHOW TABLES;`` (MariaDB, MySQL),
 ``.tables`` (SQLite), or ``SELECT TABLE_NAME FROM USER_TABLES;`` (Oracle) to
 display the tables Django created.
 
-.. admonition:: For the minimalists
+
 
     Like we said above, the default applications are included for the common
     case, but not everybody needs them. If you don't need any or all of them,
     feel free to comment-out or delete the appropriate line(s) from
-    :setting:`INSTALLED_APPS` before running :djadmin:`migrate`. The
-    :djadmin:`migrate` command will only run migrations for apps in
-    :setting:`INSTALLED_APPS`.
+    `INSTALLED_APPS` before running `migrate`. The
+    `migrate` command will only run migrations for apps in
+    `INSTALLED_APPS`.
 
-.. _creating-models:
 
-Creating models
-===============
+
+
+## Creating models
+
 
 Now we'll define your models -- essentially, your database layout, with
 additional metadata.
 
-.. admonition:: Philosophy
-
    A model is the single, definitive source of information about your data. It
    contains the essential fields and behaviors of the data you're storing.
-   Django follows the :ref:`DRY Principle <dry>`. The goal is to define your
+   Django follows the `DRY Principle`. The goal is to define your
    data model in one place and automatically derive things from it.
 
    This includes the migrations - unlike in Ruby On Rails, for example, migrations
@@ -134,10 +132,8 @@ fields: the text of the choice and a vote tally. Each ``Choice`` is associated
 with a ``Question``.
 
 These concepts are represented by Python classes. Edit the
-:file:`polls/models.py` file so it looks like this:
+`polls/models.py` file so it looks like this:
 
-.. code-block:: python
-    :caption: ``polls/models.py``
 
     from django.db import models
 
@@ -153,38 +149,38 @@ These concepts are represented by Python classes. Edit the
         votes = models.IntegerField(default=0)
 
 Here, each model is represented by a class that subclasses
-:class:`django.db.models.Model`. Each model has a number of class variables,
+`django.db.models.Model`. Each model has a number of class variables,
 each of which represents a database field in the model.
 
-Each field is represented by an instance of a :class:`~django.db.models.Field`
-class -- e.g., :class:`~django.db.models.CharField` for character fields and
-:class:`~django.db.models.DateTimeField` for datetimes. This tells Django what
+Each field is represented by an instance of a `~django.db.models.Field`
+class -- e.g., `~django.db.models.CharField` for character fields and
+`~django.db.models.DateTimeField` for datetimes. This tells Django what
 type of data each field holds.
 
-The name of each :class:`~django.db.models.Field` instance (e.g.
+The name of each `~django.db.models.Field` instance (e.g.
 ``question_text`` or ``pub_date``) is the field's name, in machine-friendly
 format. You'll use this value in your Python code, and your database will use
 it as the column name.
 
 You can use an optional first positional argument to a
-:class:`~django.db.models.Field` to designate a human-readable name. That's used
+`~django.db.models.Field` to designate a human-readable name. That's used
 in a couple of introspective parts of Django, and it doubles as documentation.
 If this field isn't provided, Django will use the machine-readable name. In this
 example, we've only defined a human-readable name for ``Question.pub_date``.
 For all other fields in this model, the field's machine-readable name will
 suffice as its human-readable name.
 
-Some :class:`~django.db.models.Field` classes have required arguments.
-:class:`~django.db.models.CharField`, for example, requires that you give it a
-:attr:`~django.db.models.CharField.max_length`. That's used not only in the
+Some `~django.db.models.Field` classes have required arguments.
+`~django.db.models.CharField`, for example, requires that you give it a
+`max_length`. That's used not only in the
 database schema, but in validation, as we'll soon see.
 
-A :class:`~django.db.models.Field` can also have various optional arguments; in
-this case, we've set the :attr:`~django.db.models.Field.default` value of
+A `~django.db.models.Field` can also have various optional arguments; in
+this case, we've set the default value of
 ``votes`` to 0.
 
 Finally, note a relationship is defined, using
-:class:`~django.db.models.ForeignKey`. That tells Django each ``Choice`` is
+`~django.db.models.ForeignKey`. That tells Django each ``Choice`` is
 related to a single ``Question``. Django supports all the common database
 relationships: many-to-one, many-to-many, and one-to-one.
 
