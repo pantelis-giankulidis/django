@@ -184,8 +184,7 @@ Finally, note a relationship is defined, using
 related to a single ``Question``. Django supports all the common database
 relationships: many-to-one, many-to-many, and one-to-one.
 
-Activating models
-=================
+## Activating models
 
 That small bit of model code gives Django a lot of information. With it, Django
 is able to:
@@ -195,21 +194,16 @@ is able to:
 
 But first we need to tell our project that the ``polls`` app is installed.
 
-.. admonition:: Philosophy
-
     Django apps are "pluggable": You can use an app in multiple projects, and
     you can distribute apps, because they don't have to be tied to a given
     Django installation.
 
 To include the app in our project, we need to add a reference to its
-configuration class in the :setting:`INSTALLED_APPS` setting. The
-``PollsConfig`` class is in the :file:`polls/apps.py` file, so its dotted path
-is ``'polls.apps.PollsConfig'``. Edit the :file:`mysite/settings.py` file and
-add that dotted path to the :setting:`INSTALLED_APPS` setting. It'll look like
+configuration class in the `INSTALLED_APPS` setting. The
+``PollsConfig`` class is in the `polls/apps.py` file, so its dotted path
+is ``'polls.apps.PollsConfig'``. Edit the `mysite/settings.py` file and
+add that dotted path to the `INSTALLED_APPS` setting. It'll look like
 this:
-
-.. code-block:: python
-    :caption: ``mysite/settings.py``
 
     INSTALLED_APPS = [
         'polls.apps.PollsConfig',
@@ -223,13 +217,10 @@ this:
 
 Now Django knows to include the ``polls`` app. Let's run another command:
 
-.. console::
 
     $ python manage.py makemigrations polls
 
 You should see something similar to the following:
-
-.. code-block:: text
 
     Migrations for 'polls':
       polls/migrations/0001_initial.py
@@ -248,18 +239,16 @@ they're designed to be human-editable in case you want to manually tweak how
 Django changes things.
 
 There's a command that will run the migrations for you and manage your database
-schema automatically - that's called :djadmin:`migrate`, and we'll come to it in a
+schema automatically - that's called `migrate`, and we'll come to it in a
 moment - but first, let's see what SQL that migration would run. The
-:djadmin:`sqlmigrate` command takes migration names and returns their SQL:
+`sqlmigrate` command takes migration names and returns their SQL:
 
-.. console::
 
     $ python manage.py sqlmigrate polls 0001
 
 You should see something similar to the following (we've reformatted it for
 readability):
 
-.. code-block:: sql
 
     BEGIN;
     --
@@ -312,19 +301,18 @@ Note the following:
   goes for the quoting of field names -- e.g., using double quotes or
   single quotes.
 
-* The :djadmin:`sqlmigrate` command doesn't actually run the migration on your
+* The `sqlmigrate` command doesn't actually run the migration on your
   database - instead, it prints it to the screen so that you can see what SQL
   Django thinks is required. It's useful for checking what Django is going to
   do or if you have database administrators who require SQL scripts for
   changes.
 
 If you're interested, you can also run
-:djadmin:`python manage.py check <check>`; this checks for any problems in
+`python manage.py check <check>`; this checks for any problems in
 your project without making migrations or touching the database.
 
-Now, run :djadmin:`migrate` again to create those model tables in your database:
+Now, run `migrate` again to create those model tables in your database:
 
-.. console::
 
     $ python manage.py migrate
     Operations to perform:
@@ -333,7 +321,7 @@ Now, run :djadmin:`migrate` again to create those model tables in your database:
       Rendering model states... DONE
       Applying polls.0001_initial... OK
 
-The :djadmin:`migrate` command takes all the migrations that haven't been
+The `migrate` command takes all the migrations that haven't been
 applied (Django tracks which ones are applied using a special table in your
 database called ``django_migrations``) and runs them against your database -
 essentially, synchronizing the changes you made to your models with the schema
@@ -346,9 +334,9 @@ losing data. We'll cover them in more depth in a later part of the tutorial,
 but for now, remember the three-step guide to making model changes:
 
 * Change your models (in ``models.py``).
-* Run :djadmin:`python manage.py makemigrations <makemigrations>` to create
+* Run `python manage.py makemigrations <makemigrations>` to create
   migrations for those changes
-* Run :djadmin:`python manage.py migrate <migrate>` to apply those changes to
+* Run `python manage.py migrate <migrate>` to apply those changes to
   the database.
 
 The reason that there are separate commands to make and apply migrations is
@@ -356,24 +344,22 @@ because you'll commit migrations to your version control system and ship them
 with your app; they not only make your development easier, they're also
 usable by other developers and in production.
 
-Read the :doc:`django-admin documentation </ref/django-admin>` for full
+Read the [django-admin documentation](../ref/django-admin.txt) for full
 information on what the ``manage.py`` utility can do.
 
-Playing with the API
-====================
+## Playing with the API
 
 Now, let's hop into the interactive Python shell and play around with the free
 API Django gives you. To invoke the Python shell, use this command:
 
-.. console::
 
     $ python manage.py shell
 
-We're using this instead of simply typing "python", because :file:`manage.py`
-sets the :envvar:`DJANGO_SETTINGS_MODULE` environment variable, which gives
-Django the Python import path to your :file:`mysite/settings.py` file.
+We're using this instead of simply typing "python", because `manage.py`
+sets the `DJANGO_SETTINGS_MODULE` environment variable, which gives
+Django the Python import path to your `mysite/settings.py` file.
 
-Once you're in the shell, explore the :doc:`database API </topics/db/queries>`::
+Once you're in the shell, explore the [database API](../topics/db/queries.txt):
 
     >>> from polls.models import Choice, Question  # Import the model classes we just wrote.
 
@@ -409,14 +395,11 @@ Once you're in the shell, explore the :doc:`database API </topics/db/queries>`::
     >>> Question.objects.all()
     <QuerySet [<Question: Question object (1)>]>
 
-Wait a minute. ``<Question: Question object (1)>`` isn't a helpful
+Wait a minute. ``<Question: Question object (1)>`` in the last line, isn't a helpful
 representation of this object. Let's fix that by editing the ``Question`` model
 (in the ``polls/models.py`` file) and adding a
-:meth:`~django.db.models.Model.__str__` method to both ``Question`` and
+`~django.db.models.Model.__str__` method to both ``Question`` and
 ``Choice``:
-
-.. code-block:: python
-    :caption: ``polls/models.py``
 
     from django.db import models
 
@@ -430,17 +413,12 @@ representation of this object. Let's fix that by editing the ``Question`` model
         def __str__(self):
             return self.choice_text
 
-It's important to add :meth:`~django.db.models.Model.__str__` methods to your
+It's important to add `~django.db.models.Model.__str__` methods to your
 models, not only for your own convenience when dealing with the interactive
 prompt, but also because objects' representations are used throughout Django's
 automatically-generated admin.
 
-.. _tutorial02-import-timezone:
-
 Let's also add a custom method to this model:
-
-.. code-block:: python
-    :caption: ``polls/models.py``
 
     import datetime
 
@@ -454,10 +432,10 @@ Let's also add a custom method to this model:
             return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
 
 Note the addition of ``import datetime`` and ``from django.utils import
-timezone``, to reference Python's standard :mod:`datetime` module and Django's
-time-zone-related utilities in :mod:`django.utils.timezone`, respectively. If
+timezone``, to reference Python's standard `datetime` module and Django's
+time-zone-related utilities in `django.utils.timezone`, respectively. If
 you aren't familiar with time zone handling in Python, you can learn more in
-the :doc:`time zone support docs </topics/i18n/timezones>`.
+the [time zone support docs](../topics/i18n/timezones.txt).
 
 Save these changes and start a new Python interactive shell by running
 ``python manage.py shell`` again::
@@ -538,16 +516,11 @@ Save these changes and start a new Python interactive shell by running
     >>> c = q.choice_set.filter(choice_text__startswith='Just hacking')
     >>> c.delete()
 
-For more information on model relations, see :doc:`Accessing related objects
-</ref/models/relations>`. For more on how to use double underscores to perform
-field lookups via the API, see :ref:`Field lookups <field-lookups-intro>`. For
-full details on the database API, see our :doc:`Database API reference
-</topics/db/queries>`.
+For more information on model relations, see [Accessing related objects](../ref/models/relations.txt).
+For full details on the database API, see our [Database API reference](../topics/db/queries.txt)
 
-Introducing the Django Admin
-============================
+## Introducing the Django Admin
 
-.. admonition:: Philosophy
 
     Generating admin sites for your staff or clients to add, change, and delete
     content is tedious work that doesn't require much creativity. For that
@@ -562,83 +535,70 @@ Introducing the Django Admin
     The admin isn't intended to be used by site visitors. It's for site
     managers.
 
-Creating an admin user
-----------------------
+### Creating an admin user
 
 First we'll need to create a user who can login to the admin site. Run the
 following command:
 
-.. console::
 
     $ python manage.py createsuperuser
 
 Enter your desired username and press enter.
 
-.. code-block:: text
 
     Username: admin
 
 You will then be prompted for your desired email address:
 
-.. code-block:: text
 
     Email address: admin@example.com
 
 The final step is to enter your password. You will be asked to enter your
 password twice, the second time as a confirmation of the first.
 
-.. code-block:: text
 
     Password: **********
     Password (again): *********
     Superuser created successfully.
 
-Start the development server
-----------------------------
+### Start the development server
 
 The Django admin site is activated by default. Let's start the development
 server and explore it.
 
 If the server is not running start it like so:
 
-.. console::
 
     $ python manage.py runserver
 
 Now, open a web browser and go to "/admin/" on your local domain -- e.g.,
 http://127.0.0.1:8000/admin/. You should see the admin's login screen:
 
-.. image:: _images/admin01.png
-   :alt: Django admin login screen
+![](./_images/admin01.png)
 
-Since :doc:`translation </topics/i18n/translation>` is turned on by default, if
-you set :setting:`LANGUAGE_CODE`, the login screen will be displayed in the
+Since [translation](../topics/i18n/translation.txt) is turned on by default, if
+you set `LANGUAGE_CODE`, the login screen will be displayed in the
 given language (if Django has appropriate translations).
 
-Enter the admin site
---------------------
+### Enter the admin site
 
 Now, try logging in with the superuser account you created in the previous step.
 You should see the Django admin index page:
 
-.. image:: _images/admin02.png
-   :alt: Django admin index page
+![](./_images/admin02.png)
 
 You should see a few types of editable content: groups and users. They are
-provided by :mod:`django.contrib.auth`, the authentication framework shipped
+provided by `django.contrib.auth`, the authentication framework shipped
 by Django.
 
-Make the poll app modifiable in the admin
------------------------------------------
+### Make the poll app modifiable in the admin
 
 But where's our poll app? It's not displayed on the admin index page.
 
 Only one more thing to do: we need to tell the admin that ``Question`` objects
-have an admin interface. To do this, open the :file:`polls/admin.py` file, and
+have an admin interface. To do this, open the `polls/admin.py` file, and
 edit it to look like this:
 
-.. code-block:: python
-    :caption: ``polls/admin.py``
 
     from django.contrib import admin
 
@@ -646,37 +606,33 @@ edit it to look like this:
 
     admin.site.register(Question)
 
-Explore the free admin functionality
-------------------------------------
+### Explore the free admin functionality
 
 Now that we've registered ``Question``, Django knows that it should be displayed on
 the admin index page:
 
-.. image:: _images/admin03t.png
-   :alt: Django admin index page, now with polls displayed
+![](./_images/admin03t.png)
 
 Click "Questions". Now you're at the "change list" page for questions. This page
 displays all the questions in the database and lets you choose one to change it.
 There's the "What's up?" question we created earlier:
 
-.. image:: _images/admin04t.png
-   :alt: Polls change list page
+![](./_images/admin04t.png)
 
 Click the "What's up?" question to edit it:
 
-.. image:: _images/admin05t.png
-   :alt: Editing form for question object
+![](./_images/admin05t.png)
 
 Things to note here:
 
 * The form is automatically generated from the ``Question`` model.
 
-* The different model field types (:class:`~django.db.models.DateTimeField`,
-  :class:`~django.db.models.CharField`) correspond to the appropriate HTML
+* The different model field types (`~django.db.models.DateTimeField`,
+  `~django.db.models.CharField`) correspond to the appropriate HTML
   input widget. Each type of field knows how to display itself in the Django
   admin.
 
-* Each :class:`~django.db.models.DateTimeField` gets free JavaScript
+* Each `~django.db.models.DateTimeField` gets free JavaScript
   shortcuts. Dates get a "Today" shortcut and calendar popup, and times get
   a "Now" shortcut and a convenient popup that lists commonly entered times.
 
@@ -694,8 +650,8 @@ The bottom part of the page gives you a couple of options:
 * Delete -- Displays a delete confirmation page.
 
 If the value of "Date published" doesn't match the time when you created the
-question in :doc:`Tutorial 1</intro/tutorial01>`, it probably
-means you forgot to set the correct value for the :setting:`TIME_ZONE` setting.
+question in [Tutorial 1](../intro/tutorial01.md), it probably
+means you forgot to set the correct value for the `TIME_ZONE` setting.
 Change it, reload the page and check that the correct value appears.
 
 Change the "Date published" by clicking the "Today" and "Now" shortcuts. Then
@@ -703,9 +659,8 @@ click "Save and continue editing." Then click "History" in the upper right.
 You'll see a page listing all changes made to this object via the Django admin,
 with the timestamp and username of the person who made the change:
 
-.. image:: _images/admin06t.png
-   :alt: History page for question object
+![](./_images/admin06t.png)
 
 When you're comfortable with the models API and have familiarized yourself with
-the admin site, read :doc:`part 3 of this tutorial</intro/tutorial03>` to learn
+the admin site, read [part 3 of this tutorial](../intro/tutorial03.txt) to learn
 about how to add more views to our polls app.
