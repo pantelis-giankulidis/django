@@ -1,18 +1,12 @@
-=====================================
-Writing your first Django app, part 3
-=====================================
+# Writing your first Django app, part 3
 
-This tutorial begins where :doc:`Tutorial 2 </intro/tutorial02>` left off. We're
+This tutorial begins where [we have](tutorial02.md) left off. We're
 continuing the web-poll application and will focus on creating the public
-interface -- "views."
+interface "views."
+If you're having trouble going through this tutorial, please head over to
+the [Getting Help](../faq/help.txt) section of the FAQ.
 
-.. admonition:: Where to get help:
-
-    If you're having trouble going through this tutorial, please head over to
-    the :doc:`Getting Help</faq/help>` section of the FAQ.
-
-Overview
-========
+## Overview
 
 A view is a "type" of web page in your Django application that generally serves
 a specific function and has a specific template. For example, in a blog
@@ -61,16 +55,15 @@ To get from a URL to a view, Django uses what are known as 'URLconfs'. A
 URLconf maps URL patterns to views.
 
 This tutorial provides basic instruction in the use of URLconfs, and you can
-refer to :doc:`/topics/http/urls` for more information.
+refer to [urls.txt](../topics/http/urls.txt) for more information.
 
-Writing more views
-==================
+## Writing more views
+
 
 Now let's add a few more views to ``polls/views.py``. These views are
 slightly different, because they take an argument:
 
-.. code-block:: python
-    :caption: ``polls/views.py``
+
 
     def detail(request, question_id):
         return HttpResponse("You're looking at question %s." % question_id)
@@ -83,10 +76,8 @@ slightly different, because they take an argument:
         return HttpResponse("You're voting on question %s." % question_id)
 
 Wire these new views into the ``polls.urls`` module by adding the following
-:func:`~django.urls.path` calls:
+`~django.urls.path` calls:
 
-.. code-block:: python
-    :caption: ``polls/urls.py``
 
     from django.urls import path
 
@@ -110,7 +101,7 @@ placeholder results and voting pages.
 
 When somebody requests a page from your website -- say, "/polls/34/", Django
 will load the ``mysite.urls`` Python module because it's pointed to by the
-:setting:`ROOT_URLCONF` setting. It finds the variable named ``urlpatterns``
+`ROOT_URLCONF` setting. It finds the variable named ``urlpatterns``
 and traverses the patterns in order. After finding the match at ``'polls/'``,
 it strips off the matching text (``"polls/"``) and sends the remaining text --
 ``"34/"`` -- to the 'polls.urls' URLconf for further processing. There it
@@ -126,12 +117,11 @@ will be used to identify the matched pattern, and the ``int`` part is a
 converter that determines what patterns should match this part of the URL path.
 The colon (``:``) separates the converter and pattern name.
 
-Write views that actually do something
-======================================
+## Write views that actually do something
 
 Each view is responsible for doing one of two things: returning an
-:class:`~django.http.HttpResponse` object containing the content for the
-requested page, or raising an exception such as :exc:`~django.http.Http404`. The
+`~django.http.HttpResponse` object containing the content for the
+requested page, or raising an exception such as `~django.http.Http404`. The
 rest is up to you.
 
 Your view can read records from a database, or not. It can use a template
@@ -139,15 +129,14 @@ system such as Django's -- or a third-party Python template system -- or not.
 It can generate a PDF file, output XML, create a ZIP file on the fly, anything
 you want, using whatever Python libraries you want.
 
-All Django wants is that :class:`~django.http.HttpResponse`. Or an exception.
+All Django wants is that `~django.http.HttpResponse`,or an exception.
 
 Because it's convenient, let's use Django's own database API, which we covered
-in :doc:`Tutorial 2 </intro/tutorial02>`. Here's one stab at a new ``index()``
+in [Tutorial 2](../intro/tutorial02.md). Here's one stab at a new ``index()``
 view, which displays the latest 5 poll questions in the system, separated by
 commas, according to publication date:
 
-.. code-block:: python
-    :caption: ``polls/views.py``
+
 
     from django.http import HttpResponse
 
@@ -169,11 +158,11 @@ creating a template that the view can use.
 First, create a directory called ``templates`` in your ``polls`` directory.
 Django will look for templates in there.
 
-Your project's :setting:`TEMPLATES` setting describes how Django will load and
+Your project's `TEMPLATES` setting describes how Django will load and
 render templates. The default settings file configures a ``DjangoTemplates``
-backend whose :setting:`APP_DIRS <TEMPLATES-APP_DIRS>` option is set to
+backend whose `APP_DIRS <TEMPLATES-APP_DIRS>` option is set to
 ``True``. By convention ``DjangoTemplates`` looks for a "templates"
-subdirectory in each of the :setting:`INSTALLED_APPS`.
+subdirectory in each of the `INSTALLED_APPS`.
 
 Within the ``templates`` directory you have just created, create another
 directory called ``polls``, and within that create a file called
@@ -182,7 +171,7 @@ directory called ``polls``, and within that create a file called
 template loader works as described above, you can refer to this template within
 Django as ``polls/index.html``.
 
-.. admonition:: Template namespacing
+
 
     Now we *might* be able to get away with putting our templates directly in
     ``polls/templates`` (rather than creating another ``polls`` subdirectory),
@@ -195,8 +184,6 @@ Django as ``polls/index.html``.
 
 Put the following code in that template:
 
-.. code-block:: html+django
-    :caption: ``polls/templates/polls/index.html``
 
     {% if latest_question_list %}
         <ul>
@@ -208,7 +195,7 @@ Put the following code in that template:
         <p>No polls are available.</p>
     {% endif %}
 
-.. note::
+### Note
 
     To make the tutorial shorter, all template examples use incomplete HTML. In
     your own projects you should use `complete HTML documents`__.
@@ -217,8 +204,7 @@ __ https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Gett
 
 Now let's update our ``index`` view in ``polls/views.py`` to use the template:
 
-.. code-block:: python
-    :caption: ``polls/views.py``
+
 
     from django.http import HttpResponse
     from django.template import loader
@@ -239,19 +225,17 @@ context. The context is a dictionary mapping template variable names to Python
 objects.
 
 Load the page by pointing your browser at "/polls/", and you should see a
-bulleted-list containing the "What's up" question from :doc:`Tutorial 2
-</intro/tutorial02>`. The link points to the question's detail page.
+bulleted-list containing the "What's up" question from [Tutorial 2](../intro/tutorial02.md).
+The link points to the question's detail page.
 
-A shortcut: :func:`~django.shortcuts.render`
---------------------------------------------
+## A shortcut render
+
 
 It's a very common idiom to load a template, fill a context and return an
-:class:`~django.http.HttpResponse` object with the result of the rendered
+`~django.http.HttpResponse` object with the result of the rendered
 template. Django provides a shortcut. Here's the full ``index()`` view,
 rewritten:
 
-.. code-block:: python
-    :caption: ``polls/views.py``
 
     from django.shortcuts import render
 
@@ -264,23 +248,20 @@ rewritten:
         return render(request, 'polls/index.html', context)
 
 Note that once we've done this in all these views, we no longer need to import
-:mod:`~django.template.loader` and :class:`~django.http.HttpResponse` (you'll
+`~django.template.loader` and `~django.http.HttpResponse` (you'll
 want to keep ``HttpResponse`` if you still have the stub methods for ``detail``,
 ``results``, and ``vote``).
 
-The :func:`~django.shortcuts.render` function takes the request object as its
+The `~django.shortcuts.render` function takes the request object as its
 first argument, a template name as its second argument and a dictionary as its
-optional third argument. It returns an :class:`~django.http.HttpResponse`
+optional third argument. It returns an `~django.http.HttpResponse`
 object of the given template rendered with the given context.
 
-Raising a 404 error
-===================
+## Raising a 404 error
 
 Now, let's tackle the question detail view -- the page that displays the question text
 for a given poll. Here's the view:
 
-.. code-block:: python
-    :caption: ``polls/views.py``
 
     from django.http import Http404
     from django.shortcuts import render
@@ -294,29 +275,25 @@ for a given poll. Here's the view:
             raise Http404("Question does not exist")
         return render(request, 'polls/detail.html', {'question': question})
 
-The new concept here: The view raises the :exc:`~django.http.Http404` exception
+The new concept here: The view raises the `~django.http.Http404` exception
 if a question with the requested ID doesn't exist.
 
 We'll discuss what you could put in that ``polls/detail.html`` template a bit
 later, but if you'd like to quickly get the above example working, a file
 containing just:
 
-.. code-block:: html+django
-    :caption: ``polls/templates/polls/detail.html``
 
     {{ question }}
 
 will get you started for now.
 
-A shortcut: :func:`~django.shortcuts.get_object_or_404`
--------------------------------------------------------
+### A shortcut 404
 
-It's a very common idiom to use :meth:`~django.db.models.query.QuerySet.get`
-and raise :exc:`~django.http.Http404` if the object doesn't exist. Django
+It's a very common idiom to use `~django.db.models.query.QuerySet.get`
+and raise `~django.http.Http404` if the object doesn't exist. Django
 provides a shortcut. Here's the ``detail()`` view, rewritten:
 
-.. code-block:: python
-    :caption: ``polls/views.py``
+
 
     from django.shortcuts import get_object_or_404, render
 
@@ -326,39 +303,37 @@ provides a shortcut. Here's the ``detail()`` view, rewritten:
         question = get_object_or_404(Question, pk=question_id)
         return render(request, 'polls/detail.html', {'question': question})
 
-The :func:`~django.shortcuts.get_object_or_404` function takes a Django model
+The `~django.shortcuts.get_object_or_404` function takes a Django model
 as its first argument and an arbitrary number of keyword arguments, which it
-passes to the :meth:`~django.db.models.query.QuerySet.get` function of the
-model's manager. It raises :exc:`~django.http.Http404` if the object doesn't
+passes to the `~django.db.models.query.QuerySet.get` function of the
+model's manager. It raises `~django.http.Http404` if the object doesn't
 exist.
 
-.. admonition:: Philosophy
 
-    Why do we use a helper function :func:`~django.shortcuts.get_object_or_404`
+    Why do we use a helper function `~django.shortcuts.get_object_or_404`
     instead of automatically catching the
-    :exc:`~django.core.exceptions.ObjectDoesNotExist` exceptions at a higher
-    level, or having the model API raise :exc:`~django.http.Http404` instead of
-    :exc:`~django.core.exceptions.ObjectDoesNotExist`?
+    `~django.core.exceptions.ObjectDoesNotExist` exceptions at a higher
+    level, or having the model API raise `~django.http.Http404` instead of
+    `~django.core.exceptions.ObjectDoesNotExist`?
 
     Because that would couple the model layer to the view layer. One of the
     foremost design goals of Django is to maintain loose coupling. Some
-    controlled coupling is introduced in the :mod:`django.shortcuts` module.
+    controlled coupling is introduced in the `django.shortcuts` module.
 
-There's also a :func:`~django.shortcuts.get_list_or_404` function, which works
-just as :func:`~django.shortcuts.get_object_or_404` -- except using
-:meth:`~django.db.models.query.QuerySet.filter` instead of
-:meth:`~django.db.models.query.QuerySet.get`. It raises
-:exc:`~django.http.Http404` if the list is empty.
+There's also a `~django.shortcuts.get_list_or_404` function, which works
+just as `~django.shortcuts.get_object_or_404` -- except using
+`~django.db.models.query.QuerySet.filter` instead of
+`~django.db.models.query.QuerySet.get`. It raises
+`~django.http.Http404` if the list is empty.
 
-Use the template system
-=======================
+## Use the template system
+
 
 Back to the ``detail()`` view for our poll application. Given the context
 variable ``question``, here's what the ``polls/detail.html`` template might look
 like:
 
-.. code-block:: html+django
-    :caption: ``polls/templates/polls/detail.html``
+
 
     <h1>{{ question.question_text }}</h1>
     <ul>
@@ -373,30 +348,28 @@ on the object ``question``. Failing that, it tries an attribute lookup -- which
 works, in this case. If attribute lookup had failed, it would've tried a
 list-index lookup.
 
-Method-calling happens in the :ttag:`{% for %}<for>` loop:
+Method-calling happens in the `{% for %}<for>` loop:
 ``question.choice_set.all`` is interpreted as the Python code
 ``question.choice_set.all()``, which returns an iterable of ``Choice`` objects and is
-suitable for use in the :ttag:`{% for %}<for>` tag.
+suitable for use in the `{% for %}<for>` tag.
 
-See the :doc:`template guide </topics/templates>` for more about templates.
+See the [template guide](../topics/templates.txt) for more about templates.
 
-Removing hardcoded URLs in templates
-====================================
+## Removing hardcoded URLs in templates
 
 Remember, when we wrote the link to a question in the ``polls/index.html``
 template, the link was partially hardcoded like this:
 
-.. code-block:: html+django
+
 
     <li><a href="/polls/{{ question.id }}/">{{ question.question_text }}</a></li>
 
 The problem with this hardcoded, tightly-coupled approach is that it becomes
 challenging to change URLs on projects with a lot of templates. However, since
-you defined the name argument in the :func:`~django.urls.path` functions in
+you defined the name argument in the `~django.urls.path` functions in
 the ``polls.urls`` module, you can remove a reliance on specific URL paths
 defined in your url configurations by using the ``{% url %}`` template tag:
 
-.. code-block:: html+django
 
     <li><a href="{% url 'detail' question.id %}">{{ question.question_text }}</a></li>
 
@@ -418,8 +391,7 @@ template (or templates) you would change it in ``polls/urls.py``::
     path('specifics/<int:question_id>/', views.detail, name='detail'),
     ...
 
-Namespacing URL names
-=====================
+## Namespacing URL names
 
 The tutorial project has just one app, ``polls``. In real Django projects,
 there might be five, ten, twenty apps or more. How does Django differentiate
@@ -431,8 +403,6 @@ make it so that Django knows which app view to create for a url when using the
 The answer is to add namespaces to your  URLconf. In the ``polls/urls.py``
 file, go ahead and add an ``app_name`` to set the application namespace:
 
-.. code-block:: python
-    :caption: ``polls/urls.py``
 
     from django.urls import path
 
@@ -448,18 +418,15 @@ file, go ahead and add an ``app_name`` to set the application namespace:
 
 Now change your ``polls/index.html`` template from:
 
-.. code-block:: html+django
-    :caption: ``polls/templates/polls/index.html``
+
 
     <li><a href="{% url 'detail' question.id %}">{{ question.question_text }}</a></li>
 
 to point at the namespaced detail view:
 
-.. code-block:: html+django
-    :caption: ``polls/templates/polls/index.html``
 
     <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
 
-When you're comfortable with writing views, read :doc:`part 4 of this tutorial
-</intro/tutorial04>` to learn the basics about form processing and generic
+When you're comfortable with writing views, read [part 4](../intro/tutorial04.txt) of this tutorial
+ to learn the basics about form processing and generic
 views.
