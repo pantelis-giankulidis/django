@@ -6,7 +6,7 @@ cutting down our code.
 
 
     If you're having trouble going through this tutorial, please head over to
-    the :doc:`Getting Help</faq/help>` section of the FAQ.
+    the [Getting Help](../faq/help.txt) section of the FAQ.
 
 ## Write a minimal form
 
