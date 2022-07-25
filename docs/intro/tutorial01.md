@@ -313,5 +313,5 @@ global changes to the URL patterns of your project while only touching a single
 file.
 
 When you're comfortable with the basic request and response flow, read
-[part 2 of this tutorial](../intro/tutorial02.txt) to start working with the
+[part 2 of this tutorial](../intro/tutorial02.md) to start working with the
 database.

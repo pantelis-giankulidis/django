@@ -662,5 +662,5 @@ with the timestamp and username of the person who made the change:
 ![](./_images/admin06t.png)
 
 When you're comfortable with the models API and have familiarized yourself with
-the admin site, read [part 3 of this tutorial](../intro/tutorial03.txt) to learn
+the admin site, read [part 3 of this tutorial](../intro/tutorial03.md) to learn
 about how to add more views to our polls app.

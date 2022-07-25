@@ -427,6 +427,6 @@ to point at the namespaced detail view:
 
     <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
 
-When you're comfortable with writing views, read [part 4](../intro/tutorial04.txt) of this tutorial
+When you're comfortable with writing views, read [part 4](../intro/tutorial04.md) of this tutorial
  to learn the basics about form processing and generic
 views.
