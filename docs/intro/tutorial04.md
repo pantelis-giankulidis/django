@@ -322,4 +322,4 @@ Run the server, and use your new polling app based on generic views.
 
 For full details on generic views, see the [generic views documentation](../topics/class-based-views/index.txt).
 
-When you're comfortable with forms and generic views, read [part 5 of this tutorial](../intro/tutorial05.txt) to learn about testing our polls app.
+When you're comfortable with forms and generic views, read [part 5 of this tutorial](../intro/tutorial05.md) to learn about testing our polls app.
