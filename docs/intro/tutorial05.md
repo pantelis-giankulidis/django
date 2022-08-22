@@ -641,5 +641,5 @@ information about testing.
 For full details on testing, see [Testing in Django](../topics/testing/index.txt).
 
 When you're comfortable with testing Django views, read
-[part 6 of this tutorial](../intro/tutorial06.txt) to learn about
+[part 6 of this tutorial](../intro/tutorial06.md) to learn about
 static files management.

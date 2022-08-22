@@ -1,8 +1,6 @@
-=====================================
-Writing your first Django app, part 6
-=====================================
+# Writing your first Django app, part 6
 
-This tutorial begins where :doc:`Tutorial 5 </intro/tutorial05>` left off.
+This tutorial begins where [Tutorial 5](../intro/tutorial05.md) left off.
 We've built a tested web-poll application, and we'll now add a stylesheet and
 an image.
 
@@ -20,23 +18,20 @@ That's what ``django.contrib.staticfiles`` is for: it collects static files
 from each of your applications (and any other places you specify) into a
 single location that can easily be served in production.
 
-.. admonition:: Where to get help:
+If you're having trouble going through this tutorial, please head over to
+the [Getting Help](../faq/index.txt) section of the FAQ.
 
-    If you're having trouble going through this tutorial, please head over to
-    the :doc:`Getting Help</faq/help>` section of the FAQ.
-
-Customize your *app's* look and feel
-====================================
+## Customize your *app's* look and feel
 
 First, create a directory called ``static`` in your ``polls`` directory. Django
 will look for static files there, similarly to how Django finds templates
 inside ``polls/templates/``.
 
-Django's :setting:`STATICFILES_FINDERS` setting contains a list
+Django's `STATICFILES_FINDERS` setting contains a list
 of finders that know how to discover static files from various
 sources. One of the defaults is ``AppDirectoriesFinder`` which
 looks for a "static" subdirectory in each of the
-:setting:`INSTALLED_APPS`, like the one in ``polls`` we just created. The admin
+`INSTALLED_APPS`, like the one in ``polls`` we just created. The admin
 site uses the same directory structure for its static files.
 
 Within the ``static`` directory you have just created, create another directory
@@ -46,22 +41,19 @@ of how the ``AppDirectoriesFinder`` staticfile finder works, you can refer to
 this static file in Django as ``polls/style.css``, similar to how you reference
 the path for templates.
 
-.. admonition:: Static file namespacing
 
     Just like templates, we *might* be able to get away with putting our static
-    files directly in ``polls/static`` (rather than creating another ``polls``
+    files directly in polls/static (rather than creating another 'polls'
     subdirectory), but it would actually be a bad idea. Django will choose the
     first static file it finds whose name matches, and if you had a static file
-    with the same name in a *different* application, Django would be unable to
+    with the same name in a different application, Django would be unable to
     distinguish between them. We need to be able to point Django at the right
-    one, and the best way to ensure this is by *namespacing* them. That is, by
-    putting those static files inside *another* directory named for the
+    one, and the best way to ensure this is by "namespacing" them. That is, by
+    putting those static files inside another directory named for the
     application itself.
 
-Put the following code in that stylesheet (``polls/static/polls/style.css``):
+Put the following code in that stylesheet ``polls/static/polls/style.css``:
 
-.. code-block:: css
-    :caption: ``polls/static/polls/style.css``
 
     li a {
         color: green;
@@ -69,8 +61,6 @@ Put the following code in that stylesheet (``polls/static/polls/style.css``):
 
 Next, add the following at the top of ``polls/templates/polls/index.html``:
 
-.. code-block:: html+django
-    :caption: ``polls/templates/polls/index.html``
 
     {% load static %}
 
@@ -82,7 +72,6 @@ That's all you need to do for development.
 
 Start the server (or restart it if it's already running):
 
-.. console::
 
     $ python manage.py runserver
 
@@ -90,8 +79,7 @@ Reload ``http://localhost:8000/polls/`` and you should see that the question
 links are green (Django style!) which means that your stylesheet was properly
 loaded.
 
-Adding a background-image
-=========================
+## Adding a background-image
 
 Next, we'll create a subdirectory for images. Create an ``images`` subdirectory
 in the ``polls/static/polls/`` directory. Inside this directory, add any image
@@ -100,10 +88,9 @@ we're using a file named ``background.png``, which will have the full path
 ``polls/static/polls/images/background.png``.
 
 Then, add a reference to your image in your stylesheet
-(``polls/static/polls/style.css``):
+ ``polls/static/polls/style.css``:
 
-.. code-block:: css
-    :caption: ``polls/static/polls/style.css``
+
 
     body {
         background: white url("images/background.png") no-repeat;
@@ -112,22 +99,21 @@ Then, add a reference to your image in your stylesheet
 Reload ``http://localhost:8000/polls/`` and you should see the background
 loaded in the top left of the screen.
 
-.. warning::
 
-    The ``{% static %}`` template tag is not available for use in static files
+    The {% static %} template tag is not available for use in static files
     which aren't generated by Django, like your stylesheet. You should always
-    use **relative paths** to link your static files between each other,
-    because then you can change :setting:`STATIC_URL` (used by the
-    :ttag:`static` template tag to generate its URLs) without having to modify
+    use relative paths to link your static files between each other,
+    because then you can change `STATIC_URL` (used by the
+    `static` template tag to generate its URLs) without having to modify
     a bunch of paths in your static files as well.
 
 These are the **basics**. For more details on settings and other bits included
-with the framework see
-:doc:`the static files howto </howto/static-files/index>` and
-:doc:`the staticfiles reference </ref/contrib/staticfiles>`. :doc:`Deploying
-static files </howto/static-files/deployment>` discusses how to use static
+with the framework see the 
+[static files howto](../howto/static-files/index.txt) and the 
+[staticfiles reference](../ref/contrib/staticfiles.txt). 
+Also, [deploying static files](../howto/static-files/deployment.txt) discusses how to use static
 files on a real server.
 
-When you're comfortable with the static files, read :doc:`part 7 of this
-tutorial </intro/tutorial07>` to learn how to customize Django's
+When you're comfortable with the static files, read the 
+[part 7 of this tutorial](../intro/tutorial07.txt) to learn how to customize Django's
 automatically-generated admin site.
