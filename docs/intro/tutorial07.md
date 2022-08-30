@@ -1,19 +1,12 @@
-=====================================
-Writing your first Django app, part 7
-=====================================
+# Writing your first Django app, part 7
 
-This tutorial begins where :doc:`Tutorial 6 </intro/tutorial06>` left off. We're
+This tutorial begins where [Tutorial 6](../intro/tutorial06.md) left off. We're
 continuing the web-poll application and will focus on customizing Django's
-automatically-generated admin site that we first explored in :doc:`Tutorial 2
-</intro/tutorial02>`.
+automatically-generated admin site that we first explored in [Tutorial 2](../intro/tutorial02.md).
+If you're having trouble going through this tutorial, please head over to
+the [Getting Help](../faq/help.txt) section of the FAQ.
 
-.. admonition:: Where to get help:
-
-    If you're having trouble going through this tutorial, please head over to
-    the :doc:`Getting Help</faq/help>` section of the FAQ.
-
-Customize the admin form
-========================
+## Customize the admin form
 
 By registering the ``Question`` model with ``admin.site.register(Question)``,
 Django was able to construct a default form representation. Often, you'll want
@@ -23,8 +16,7 @@ Django the options you want when you register the object.
 Let's see how this works by reordering the fields on the edit form. Replace
 the ``admin.site.register(Question)`` line with:
 
-.. code-block:: python
-    :caption: ``polls/admin.py``
+
 
     from django.contrib import admin
 
@@ -43,8 +35,7 @@ admin options for a model.
 This particular change above makes the "Publication date" come before the
 "Question" field:
 
-.. image:: _images/admin07.png
-   :alt: Fields have been reordered
+![](./_images/admin07.png)
 
 This isn't impressive with only two fields, but for admin forms with dozens
 of fields, choosing an intuitive order is an important usability detail.
@@ -52,8 +43,6 @@ of fields, choosing an intuitive order is an important usability detail.
 And speaking of forms with dozens of fields, you might want to split the form
 up into fieldsets:
 
-.. code-block:: python
-    :caption: ``polls/admin.py``
 
     from django.contrib import admin
 
@@ -69,14 +58,12 @@ up into fieldsets:
     admin.site.register(Question, QuestionAdmin)
 
 The first element of each tuple in
-:attr:`~django.contrib.admin.ModelAdmin.fieldsets` is the title of the fieldset.
+`~django.contrib.admin.ModelAdmin.fieldsets` is the title of the fieldset.
 Here's what our form looks like now:
 
-.. image:: _images/admin08t.png
-   :alt: Form has fieldsets now
+![](./_images/admin08t.png)
 
-Adding related objects
-======================
+## Adding related objects
 
 OK, we have our Question admin page, but a ``Question`` has multiple
 ``Choice``\s, and the admin page doesn't display choices.
@@ -86,8 +73,7 @@ Yet.
 There are two ways to solve this problem. The first is to register ``Choice``
 with the admin just as we did with ``Question``:
 
-.. code-block:: python
-    :caption: ``polls/admin.py``
+
 
     from django.contrib import admin
 
@@ -98,11 +84,10 @@ with the admin just as we did with ``Question``:
 Now "Choices" is an available option in the Django admin. The "Add choice" form
 looks like this:
 
-.. image:: _images/admin09.png
-   :alt: Choice admin page
+![](./_images/admin09.png)
 
 In that form, the "Question" field is a select box containing every question in the
-database. Django knows that a :class:`~django.db.models.ForeignKey` should be
+database. Django knows that a `~django.db.models.ForeignKey` should be
 represented in the admin as a ``<select>`` box. In our case, only one question
 exists at this point.
 
@@ -120,8 +105,6 @@ It'd be better if you could add a bunch of Choices directly when you create the
 Remove the ``register()`` call for the ``Choice`` model. Then, edit the ``Question``
 registration code to read:
 
-.. code-block:: python
-    :caption: ``polls/admin.py``
 
     from django.contrib import admin
 
@@ -142,13 +125,12 @@ registration code to read:
 
     admin.site.register(Question, QuestionAdmin)
 
-This tells Django: "``Choice`` objects are edited on the ``Question`` admin page. By
+This tells Django: " The ``Choice`` objects are edited on the ``Question`` admin page. By
 default, provide enough fields for 3 choices."
 
 Load the "Add question" page to see how that looks:
 
-.. image:: _images/admin10t.png
-   :alt: Add question page now has choices on it
+![](./_images/admin10t.png)
 
 It works like this: There are three slots for related Choices -- as specified
 by ``extra`` -- and each time you come back to the "Change" page for an
@@ -159,16 +141,14 @@ link.  If you click on it, a new slot will be added. If you want to remove the
 added slot, you can click on the X to the top right of the added slot. This
 image shows an added slot:
 
-.. image:: _images/admin14t.png
-   :alt: Additional slot added dynamically
+![](./_images/admin14t.png)
 
 One small problem, though. It takes a lot of screen space to display all the
 fields for entering related ``Choice`` objects. For that reason, Django offers a
 tabular way of displaying inline related objects. To use it, change the
 ``ChoiceInline`` declaration to read:
 
-.. code-block:: python
-    :caption: ``polls/admin.py``
+
 
     class ChoiceInline(admin.TabularInline):
         #...
@@ -176,41 +156,36 @@ tabular way of displaying inline related objects. To use it, change the
 With that ``TabularInline`` (instead of ``StackedInline``), the
 related objects are displayed in a more compact, table-based format:
 
-.. image:: _images/admin11t.png
-   :alt: Add question page now has more compact choices
+![](./_images/admin11t.png)
 
 Note that there is an extra "Delete?" column that allows removing rows added
 using the "Add Another Choice" button and rows that have already been saved.
 
-Customize the admin change list
-===============================
+## Customize the admin change list
 
 Now that the Question admin page is looking good, let's make some tweaks to the
 "change list" page -- the one that displays all the questions in the system.
 
 Here's what it looks like at this point:
 
-.. image:: _images/admin04t.png
-   :alt: Polls change list page
+![](./_images/admin04t.png)
 
 By default, Django displays the ``str()`` of each object. But sometimes it'd be
 more helpful if we could display individual fields. To do that, use the
-:attr:`~django.contrib.admin.ModelAdmin.list_display` admin option, which is a
+`~django.contrib.admin.ModelAdmin.list_display` admin option, which is a
 tuple of field names to display, as columns, on the change list page for the
 object:
 
-.. code-block:: python
-    :caption: ``polls/admin.py``
+
 
     class QuestionAdmin(admin.ModelAdmin):
         # ...
         list_display = ('question_text', 'pub_date')
 
 For good measure, let's also include the ``was_published_recently()`` method
-from :doc:`Tutorial 2 </intro/tutorial02>`:
+from [Tutorial 2](../intro/tutorial02.md):
 
-.. code-block:: python
-    :caption: ``polls/admin.py``
+
 
     class QuestionAdmin(admin.ModelAdmin):
         # ...
@@ -218,8 +193,7 @@ from :doc:`Tutorial 2 </intro/tutorial02>`:
 
 Now the question change list page looks like this:
 
-.. image:: _images/admin12t.png
-   :alt: Polls change list page, updated
+![](./_images/admin12t.png)
 
 You can click on the column headers to sort by those values -- except in the
 case of the ``was_published_recently`` header, because sorting by the output
@@ -228,11 +202,9 @@ of an arbitrary method is not supported. Also note that the column header for
 underscores replaced with spaces), and that each line contains the string
 representation of the output.
 
-You can improve that by using the :func:`~django.contrib.admin.display`
-decorator on that method (in :file:`polls/models.py`), as follows:
+You can improve that by using the `~django.contrib.admin.display`
+decorator on that method (in `polls/models.py`), as follows:
 
-.. code-block:: python
-    :caption: ``polls/models.py``
 
     from django.contrib import admin
 
@@ -248,11 +220,11 @@ decorator on that method (in :file:`polls/models.py`), as follows:
             return now - datetime.timedelta(days=1) <= self.pub_date <= now
 
 For more information on the properties configurable via the decorator, see
-:attr:`~django.contrib.admin.ModelAdmin.list_display`.
+`~django.contrib.admin.ModelAdmin.list_display`.
 
-Edit your :file:`polls/admin.py` file again and add an improvement to the
+Edit your `polls/admin.py` file again and add an improvement to the
 ``Question`` change list page: filters using the
-:attr:`~django.contrib.admin.ModelAdmin.list_filter`. Add the following line to
+`~django.contrib.admin.ModelAdmin.list_filter`. Add the following line to
 ``QuestionAdmin``::
 
     list_filter = ['pub_date']
@@ -260,15 +232,14 @@ Edit your :file:`polls/admin.py` file again and add an improvement to the
 That adds a "Filter" sidebar that lets people filter the change list by the
 ``pub_date`` field:
 
-.. image:: _images/admin13t.png
-   :alt: Polls change list page, updated
+![](./_images/admin13t.png)
 
 The type of filter displayed depends on the type of field you're filtering on.
-Because ``pub_date`` is a :class:`~django.db.models.DateTimeField`, Django
+Because ``pub_date`` is a `~django.db.models.DateTimeField`, Django
 knows to give appropriate filter options: "Any date", "Today", "Past 7 days",
 "This month", "This year".
 
-This is shaping up well. Let's add some search capability::
+This is shaping up well. Let's add some search capability:
 
     search_fields = ['question_text']
 
@@ -279,16 +250,12 @@ scenes, limiting the number of search fields to a reasonable number will make
 it easier for your database to do the search.
 
 Now's also a good time to note that change lists give you free pagination. The
-default is to display 100 items per page. :attr:`Change list pagination
-<django.contrib.admin.ModelAdmin.list_per_page>`, :attr:`search boxes
-<django.contrib.admin.ModelAdmin.search_fields>`, :attr:`filters
-<django.contrib.admin.ModelAdmin.list_filter>`, :attr:`date-hierarchies
-<django.contrib.admin.ModelAdmin.date_hierarchy>`, and
-:attr:`column-header-ordering <django.contrib.admin.ModelAdmin.list_display>`
+default is to display 100 items per page. Change list pagination, 
+search boxes(`django.contrib.admin.ModelAdmin.search_fields`), filters(`django.contrib.admin.ModelAdmin.list_filter`), 
+ date-hierarchies(`django.contrib.admin.ModelAdmin.date_hierarchy`) and column-header-ordering 
 all work together like you think they should.
 
-Customize the admin look and feel
-=================================
+## Customize the admin look and feel
 
 Clearly, having "Django administration" at the top of each admin page is
 ridiculous. It's just placeholder text.
@@ -296,21 +263,17 @@ ridiculous. It's just placeholder text.
 You can change it, though, using Django's template system. The Django admin is
 powered by Django itself, and its interfaces use Django's own template system.
 
-.. _ref-customizing-your-projects-templates:
 
-Customizing your *project's* templates
---------------------------------------
+### Customizing your *project's* templates
 
 Create a ``templates`` directory in your project directory (the one that
 contains ``manage.py``). Templates can live anywhere on your filesystem that
 Django can access. (Django runs as whatever user your server runs.) However,
 keeping your templates within the project is a good convention to follow.
 
-Open your settings file (:file:`mysite/settings.py`, remember) and add a
-:setting:`DIRS <TEMPLATES-DIRS>` option in the :setting:`TEMPLATES` setting:
+Open your settings file (`mysite/settings.py`, remember) and add a
+`DIRS <TEMPLATES-DIRS>` option in the `TEMPLATES` setting:
 
-.. code-block:: python
-    :caption: ``mysite/settings.py``
 
     TEMPLATES = [
         {
@@ -328,29 +291,25 @@ Open your settings file (:file:`mysite/settings.py`, remember) and add a
         },
     ]
 
-:setting:`DIRS <TEMPLATES-DIRS>` is a list of filesystem directories to check
+`DIRS <TEMPLATES-DIRS>` is a list of filesystem directories to check
 when loading Django templates; it's a search path.
 
-.. admonition:: Organizing templates
 
-    Just like the static files, we *could* have all our templates together, in
+    Just like the static files, we could have all our templates together, in
     one big templates directory, and it would work perfectly well. However,
     templates that belong to a particular application should be placed in that
-    application's template directory (e.g. ``polls/templates``) rather than the
-    project's (``templates``). We'll discuss in more detail in the
-    :doc:`reusable apps tutorial </intro/reusable-apps>` *why* we do this.
+    application's template directory (e.g. polls/templates) rather than the
+    project's (templates). We'll discuss in more detail in the
+    reusable apps tutorial why we do this.
 
 Now create a directory called ``admin`` inside ``templates``, and copy the
 template ``admin/base_site.html`` from within the default Django admin
 template directory in the source code of Django itself
 (``django/contrib/admin/templates``) into that directory.
 
-.. admonition:: Where are the Django source files?
 
     If you have difficulty finding where the Django source files are located
     on your system, run the following command:
-
-    .. console::
 
         $ python -c "import django; print(django.__path__)"
 
@@ -359,7 +318,7 @@ Then, edit the file and replace
 braces) with your own site's name as you see fit. You should end up with
 a section of code like:
 
-.. code-block:: html+django
+
 
     {% block branding %}
     <h1 id="site-name"><a href="{% url 'admin:index' %}">Polls Administration</a></h1>
@@ -367,25 +326,24 @@ a section of code like:
 
 We use this approach to teach you how to override templates. In an actual
 project, you would probably use
-the :attr:`django.contrib.admin.AdminSite.site_header` attribute to more easily
+the `django.contrib.admin.AdminSite.site_header` attribute to more easily
 make this particular customization.
 
 This template file contains lots of text like ``{% block branding %}``
 and ``{{ title }}``. The ``{%`` and ``{{`` tags are part of Django's
 template language. When Django renders ``admin/base_site.html``, this
 template language will be evaluated to produce the final HTML page, just like
-we saw in :doc:`Tutorial 3 </intro/tutorial03>`.
+we saw in [Tutorial 3](../intro/tutorial03.md).
 
 Note that any of Django's default admin templates can be overridden. To
 override a template, do the same thing you did with ``base_site.html`` -- copy
 it from the default directory into your custom directory, and make changes.
 
-Customizing your *application's* templates
-------------------------------------------
+### Customizing your *application's* templates
 
-Astute readers will ask: But if :setting:`DIRS <TEMPLATES-DIRS>` was empty by
+Astute readers will ask: But if `DIRS <TEMPLATES-DIRS>` was empty by
 default, how was Django finding the default admin templates? The answer is
-that, since :setting:`APP_DIRS <TEMPLATES-APP_DIRS>` is set to ``True``,
+that, since `APP_DIRS <TEMPLATES-APP_DIRS>` is set to ``True``,
 Django automatically looks for a ``templates/`` subdirectory within each
 application package, for use as a fallback (don't forget that
 ``django.contrib.admin`` is an application).
@@ -397,16 +355,15 @@ more sensible to modify the *application's* templates, rather than those in the
 *project*. That way, you could include the polls application in any new project
 and be assured that it would find the custom templates it needed.
 
-See the :ref:`template loading documentation <template-loading>` for more
+See the `template loading documentation` for more
 information about how Django finds its templates.
 
-Customize the admin index page
-==============================
+## Customize the admin index page
 
 On a similar note, you might want to customize the look and feel of the Django
 admin index page.
 
-By default, it displays all the apps in :setting:`INSTALLED_APPS` that have been
+By default, it displays all the apps in `INSTALLED_APPS` that have been
 registered with the admin application, in alphabetical order. You may want to
 make significant changes to the layout. After all, the index is probably the
 most important page of the admin, and it should be easy to use.
@@ -418,12 +375,10 @@ uses a template variable called ``app_list``. That variable contains every
 installed Django app. Instead of using that, you can hard-code links to
 object-specific admin pages in whatever way you think is best.
 
-What's next?
-============
+## What's next?
 
 The beginner tutorial ends here. In the meantime, you might want to check out
-some pointers on :doc:`where to go from here </intro/whatsnext>`.
+some pointers on [where to go from here](../intro/whatsnext.txt).
 
 If you are familiar with Python packaging and interested in learning how to
-turn polls into a "reusable app", check out :doc:`Advanced tutorial: How to
-write reusable apps</intro/reusable-apps>`.
+turn polls into a "reusable app", check out [Advanced tutorial: How to write reusable apps](../intro/reusable-apps.txt).

@@ -115,5 +115,5 @@ Also, [deploying static files](../howto/static-files/deployment.txt) discusses h
 files on a real server.
 
 When you're comfortable with the static files, read the 
-[part 7 of this tutorial](../intro/tutorial07.txt) to learn how to customize Django's
+[part 7 of this tutorial](../intro/tutorial07.md) to learn how to customize Django's
 automatically-generated admin site.
