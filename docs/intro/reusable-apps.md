@@ -1,16 +1,13 @@
-=============================================
-Advanced tutorial: How to write reusable apps
-=============================================
+# Advanced tutorial: How to write reusable app
 
-This advanced tutorial begins where :doc:`Tutorial 7 </intro/tutorial07>`
+This advanced tutorial begins where [Tutorial 7](../intro/tutorial07.md)
 left off. We'll be turning our web-poll into a standalone Python package
 you can reuse in new projects and share with other people.
 
 If you haven't recently completed Tutorials 1–7, we encourage you to review
 these so that your example project matches the one described below.
 
-Reusability matters
-===================
+## Reusability matters
 
 It's a lot of work to design, build, test and maintain a web application. Many
 Python and Django projects share common problems. Wouldn't it be great if we
@@ -26,14 +23,14 @@ need to write the parts that make your project unique.
 
 Let's say you were starting a new project that needed a polls app like the one
 we've been working on. How do you make this app reusable? Luckily, you're well
-on the way already. In :doc:`Tutorial 1 </intro/tutorial01>`, we saw how we
+on the way already. In [Tutorial 1](../intro/tutorial01.md), we saw how we
 could decouple polls from the project-level URLconf using an ``include``.
 In this tutorial, we'll take further steps to make the app easy to use in new
 projects and ready to publish for others to install and use.
 
-.. admonition:: Package? App?
 
-    A Python :term:`package` provides a way of grouping related Python code for
+
+    A Python `package` provides a way of grouping related Python code for
     easy reuse. A package contains one or more files of Python code (also known
     as "modules").
 
@@ -50,8 +47,7 @@ projects and ready to publish for others to install and use.
     Python package easy for others to install. It can be a little confusing, we
     know.
 
-Your project and your reusable app
-==================================
+## Your project and your reusable app
 
 After the previous tutorials, our project should look like this::
 
@@ -88,8 +84,8 @@ After the previous tutorials, our project should look like this::
             admin/
                 base_site.html
 
-You created ``mysite/templates`` in :doc:`Tutorial 7 </intro/tutorial07>`,
-and ``polls/templates`` in :doc:`Tutorial 3 </intro/tutorial03>`. Now perhaps
+You created ``mysite/templates`` in [Tutorial 7](../intro/tutorial07.md),
+and ``polls/templates`` in [Tutorial 3](../intro/tutorial03.md). Now perhaps
 it is clearer why we chose to have separate template directories for the
 project and application: everything that is part of the polls application is in
 ``polls``. It makes the application self-contained and easier to drop into a
@@ -99,33 +95,27 @@ The ``polls`` directory could now be copied into a new Django project and
 immediately reused. It's not quite ready to be published though. For that, we
 need to package the app to make it easy for others to install.
 
-.. _installing-reusable-apps-prerequisites:
 
-Installing some prerequisites
-=============================
+## Installing some prerequisites
 
 The current state of Python packaging is a bit muddled with various tools. For
 this tutorial, we're going to use setuptools_ to build our package. It's the
 recommended packaging tool (merged with the ``distribute`` fork). We'll also be
 using `pip`_ to install and uninstall it. You should install these
-two packages now. If you need help, you can refer to :ref:`how to install
-Django with pip<installing-official-release>`. You can install ``setuptools``
-the same way.
+two packages now. If you need help, you can refer to [how to install Django with pip]( https://pypi.org/project/pip/). You can install 
+[setuptools](https://pypi.org/project/setuptools/) the same way.
 
-.. _setuptools: https://pypi.org/project/setuptools/
-.. _pip: https://pypi.org/project/pip/
 
-Packaging your app
-==================
+## Packaging your app
 
 Python *packaging* refers to preparing your app in a specific format that can
 be easily installed and used. Django itself is packaged very much like
 this. For a small app like polls, this process isn't too difficult.
 
-#. First, create a parent directory for ``polls``, outside of your Django
+First, create a parent directory for ``polls``, outside of your Django
    project. Call this directory ``django-polls``.
 
-   .. admonition::  Choosing a name for your app
+ 
 
        When choosing a name for your package, check resources like PyPI to avoid
        naming conflicts with existing packages. It's often useful to prepend
@@ -134,17 +124,14 @@ this. For a small app like polls, this process isn't too difficult.
        specific.
 
        Application labels (that is, the final part of the dotted path to
-       application packages) *must* be unique in :setting:`INSTALLED_APPS`.
-       Avoid using the same label as any of the Django :doc:`contrib packages
-       </ref/contrib/index>`, for example ``auth``, ``admin``, or
-       ``messages``.
+       application packages) *must* be unique in INSTALLED_APPS.
+       Avoid using the same label as any of the Django contrib packages, for example "auth", "admin", or
+       "messages".
 
-#. Move the ``polls`` directory into the ``django-polls`` directory.
+Move the ``polls`` directory into the ``django-polls`` directory.
 
-#. Create a file ``django-polls/README.rst`` with the following contents:
+Create a file ``django-polls/README.rst`` with the following contents:
 
-   .. code-block:: rst
-       :caption: ``django-polls/README.rst``
 
        =====
        Polls
@@ -176,30 +163,27 @@ this. For a small app like polls, this process isn't too difficult.
 
        5. Visit http://127.0.0.1:8000/polls/ to participate in the poll.
 
-#. Create a ``django-polls/LICENSE`` file. Choosing a license is beyond the
+Create a ``django-polls/LICENSE`` file. Choosing a license is beyond the
    scope of this tutorial, but suffice it to say that code released publicly
    without a license is *useless*. Django and many Django-compatible apps are
    distributed under the BSD license; however, you're free to pick your own
    license. Just be aware that your licensing choice will affect who is able
    to use your code.
 
-#. Next we'll create ``pyproject.toml``, ``setup.cfg``, and ``setup.py`` files
+Next we'll create ``pyproject.toml``, ``setup.cfg``, and ``setup.py`` files
    which detail how to build and install the app. A full explanation of these
-   files is beyond the scope of this tutorial, but the `setuptools
-   documentation <https://setuptools.pypa.io/en/latest/>`_ has a good
+   files is beyond the scope of this tutorial, but the [setuptools documentation](https://setuptools.pypa.io/en/latest/)has a good
    explanation. Create the ``django-polls/pyproject.toml``,
    ``django-polls/setup.cfg``, and ``django-polls/setup.py`` files with the
    following contents:
 
-   .. code-block:: toml
-        :caption: ``django-polls/pyproject.toml``
+``pyproject.toml``
 
         [build-system]
         requires = ['setuptools>=40.8.0', 'wheel']
         build-backend = 'setuptools.build_meta:__legacy__'
 
-   .. code-block:: ini
-        :caption: ``django-polls/setup.cfg``
+``setup.cfg``
 
         [metadata]
         name = django-polls
@@ -232,29 +216,25 @@ this. For a small app like polls, this process isn't too difficult.
         install_requires =
             Django >= X.Y  # Replace "X.Y" as appropriate
 
-   .. code-block:: python
-        :caption: ``django-polls/setup.py``
+  ``setup.py``
 
         from setuptools import setup
 
         setup()
 
-#. Only Python modules and packages are included in the package by default. To
+Only Python modules and packages are included in the package by default. To
    include additional files, we'll need to create a ``MANIFEST.in`` file. The
    setuptools docs referred to in the previous step discuss this file in more
    detail. To include the templates, the ``README.rst`` and our ``LICENSE``
    file, create a file ``django-polls/MANIFEST.in`` with the following
    contents:
 
-   .. code-block:: text
-       :caption: ``django-polls/MANIFEST.in``
-
        include LICENSE
        include README.rst
        recursive-include polls/static *
        recursive-include polls/templates *
 
-#. It's optional, but recommended, to include detailed documentation with your
+It's optional, but recommended, to include detailed documentation with your
    app. Create an empty directory ``django-polls/docs`` for future
    documentation. Add an additional line to ``django-polls/MANIFEST.in``::
 
@@ -262,23 +242,20 @@ this. For a small app like polls, this process isn't too difficult.
 
    Note that the ``docs`` directory won't be included in your package unless
    you add some files to it. Many Django apps also provide their documentation
-   online through sites like `readthedocs.org <https://readthedocs.org>`_.
+   online through sites like [readthedocs.org](https://readthedocs.org>).
 
-#. Try building your package with ``python setup.py sdist`` (run from inside
+Try building your package with ``python setup.py sdist`` (run from inside
    ``django-polls``). This creates a directory called ``dist`` and builds your
    new package, ``django-polls-0.1.tar.gz``.
 
-For more information on packaging, see Python's `Tutorial on Packaging and
-Distributing Projects
-<https://packaging.python.org/tutorials/packaging-projects/>`_.
+For more information on packaging, see Python's 
+[Tutorial on Packaging and Distributing Projects](https://packaging.python.org/tutorials/packaging-projects/).
 
-Using your own package
-======================
+## Using your own package
 
 Since we moved the ``polls`` directory out of the project, it's no longer
 working. We'll now fix this by installing our new ``django-polls`` package.
 
-.. admonition:: Installing as a user library
 
    The following steps install ``django-polls`` as a user library. Per-user
    installs have a lot of advantages over installing the package system-wide,
@@ -290,20 +267,18 @@ working. We'll now fix this by installing our new ``django-polls`` package.
    tools that run as that user, so using a virtual environment is a more robust
    solution (see below).
 
-#. To install the package, use pip (you already :ref:`installed it
-   <installing-reusable-apps-prerequisites>`, right?)::
+To install the package, use pip (you already installed it right?)
 
     python -m pip install --user django-polls/dist/django-polls-0.1.tar.gz
 
-#. With luck, your Django project should now work correctly again. Run the
+With luck, your Django project should now work correctly again. Run the
    server again to confirm this.
 
-#. To uninstall the package, use pip::
+To uninstall the package, use pip::
 
     python -m pip uninstall django-polls
 
-Publishing your app
-===================
+## Publishing your app
 
 Now that we've packaged and tested ``django-polls``, it's ready to share with
 the world! If this wasn't just an example, you could now:
@@ -312,13 +287,11 @@ the world! If this wasn't just an example, you could now:
 
 * Upload the package on your website.
 
-* Post the package on a public repository, such as `the Python Package Index
-  (PyPI)`_. `packaging.python.org <https://packaging.python.org>`_ has `a good
-  tutorial <https://packaging.python.org/tutorials/packaging-projects/#uploading-the-distribution-archives>`_
+* Post the package on a public repository, such as [the Python Package Index](https://packaging.python.org).There is a good
+  [tutorial](https://packaging.python.org/tutorials/packaging-projects/#uploading-the-distribution-archives)
   for doing this.
 
-Installing Python packages with a virtual environment
-=====================================================
+## Installing Python packages with a virtual environment
 
 Earlier, we installed the polls app as a user library. This has some
 disadvantages:
@@ -329,7 +302,7 @@ disadvantages:
   the same name).
 
 Typically, these situations only arise once you're maintaining several Django
-projects. When they do, the best solution is to use :doc:`venv
-<python:tutorial/venv>`. This tool allows you to maintain multiple isolated
+projects. When they do, the best solution is to use [venv](https://python.land/virtual-environments/virtualenv)
+This tool allows you to maintain multiple isolated
 Python environments, each with its own copy of the libraries and package
 namespace.

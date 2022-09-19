@@ -1,6 +1,4 @@
-==================
-Django at a glance
-==================
+# Django at a glance
 
 Because Django was developed in a fast-paced newsroom environment, it was
 designed to make common web development tasks fast and easy. Here's an informal
@@ -9,24 +7,20 @@ overview of how to write a database-driven web app with Django.
 The goal of this document is to give you enough technical specifics to
 understand how Django works, but this isn't intended to be a tutorial or
 reference -- but we've got both! When you're ready to start a project, you can
-:doc:`start with the tutorial </intro/tutorial01>` or :doc:`dive right into more
-detailed documentation </topics/index>`.
+[start with the tutorial](../intro/tutorial01.md) or dive right into more
+detailed [documentation](../topics/index.txt)
 
-Design your model
-=================
+## Design your model
 
 Although you can use Django without a database, it comes with an
-`object-relational mapper`_ in which you describe your database layout in Python
+[object-relational mapper_](https://en.wikipedia.org/wiki/Object-relational_mapping) in which you describe your database layout in Python
 code.
 
-.. _object-relational mapper: https://en.wikipedia.org/wiki/Object-relational_mapping
-
-The :doc:`data-model syntax </topics/db/models>` offers many rich ways of
+The [data-model syntax](../topics/db/models.txt) offers many rich ways of
 representing your models -- so far, it's been solving many years' worth of
 database-schema problems. Here's a quick example:
 
-.. code-block:: python
-    :caption: ``mysite/news/models.py``
+
 
     from django.db import models
 
@@ -45,28 +39,25 @@ database-schema problems. Here's a quick example:
         def __str__(self):
             return self.headline
 
-Install it
-==========
+## Install it
 
 Next, run the Django command-line utilities to create the database tables
 automatically:
 
-.. console::
 
     $ python manage.py makemigrations
     $ python manage.py migrate
 
-The :djadmin:`makemigrations` command looks at all your available models and
-creates migrations for whichever tables don't already exist. :djadmin:`migrate`
+The `makemigrations` command looks at all your available models and
+creates migrations for whichever tables don't already exist. `migrate`
 runs the migrations and creates tables in your database, as well as optionally
-providing :doc:`much richer schema control </topics/migrations>`.
+providing [much richer schema control](../topics/migrations.txt).
 
-Enjoy the free API
-==================
+## Enjoy the free API
 
-With that, you've got a free, and rich, :doc:`Python API </topics/db/queries>`
+With that, you've got a free, and rich, [Python API](../topics/db/queries.txt)
 to access your data. The API is created on the fly, no code generation
-necessary::
+necessary
 
     # Import the models we created from our "news" app
     >>> from news.models import Article, Reporter
@@ -137,16 +128,13 @@ necessary::
     # Delete an object with delete().
     >>> r.delete()
 
-A dynamic admin interface: it's not just scaffolding -- it's the whole house
-============================================================================
+## A dynamic admin interface: it's not just scaffolding -- it's the whole house
+
 
 Once your models are defined, Django can automatically create a professional,
-production ready :doc:`administrative interface </ref/contrib/admin/index>` --
+production ready [administrative interface](../ref/contrib/admin/index.txt) 
 a website that lets authenticated users add, change and delete objects. The
 only step required is to register your model in the admin site:
-
-.. code-block:: python
-    :caption: ``mysite/news/models.py``
 
     from django.db import models
 
@@ -156,9 +144,7 @@ only step required is to register your model in the admin site:
         content = models.TextField()
         reporter = models.ForeignKey(Reporter, on_delete=models.CASCADE)
 
-.. code-block:: python
-    :caption: ``mysite/news/admin.py``
-
+--------------------------------------------------------------
     from django.contrib import admin
 
     from . import models
@@ -173,23 +159,21 @@ One typical workflow in creating Django apps is to create models and get the
 admin sites up and running as fast as possible, so your staff (or clients) can
 start populating data. Then, develop the way data is presented to the public.
 
-Design your URLs
-================
+## Design your URLs
 
 A clean, elegant URL scheme is an important detail in a high-quality web
 application. Django encourages beautiful URL design and doesn't put any cruft
 in URLs, like ``.php`` or ``.asp``.
 
-To design URLs for an app, you create a Python module called a :doc:`URLconf
-</topics/http/urls>`. A table of contents for your app, it contains a mapping
+To design URLs for an app, you create a Python module called a [URLconf](../topics/http/urls.txt).
+A table of contents for your app, it contains a mapping
 between URL patterns and Python callback functions. URLconfs also serve to
 decouple URLs from Python code.
 
 Here's what a URLconf might look like for the ``Reporter``/``Article``
 example above:
 
-.. code-block:: python
-    :caption: ``mysite/news/urls.py``
+
 
     from django.urls import path
 
@@ -216,20 +200,17 @@ For example, if a user requested the URL "/articles/2005/05/39323/", Django
 would call the function ``news.views.article_detail(request,
 year=2005, month=5, pk=39323)``.
 
-Write your views
-================
+## Write your views
 
 Each view is responsible for doing one of two things: Returning an
-:class:`~django.http.HttpResponse` object containing the content for the
-requested page, or raising an exception such as :class:`~django.http.Http404`.
+`~django.http.HttpResponse` object containing the content for the
+requested page, or raising an exception such as `~django.http.Http404`.
 The rest is up to you.
 
 Generally, a view retrieves data according to the parameters, loads a template
 and renders the template with the retrieved data. Here's an example view for
 ``year_archive`` from above:
 
-.. code-block:: python
-    :caption: ``mysite/news/views.py``
 
     from django.shortcuts import render
 
@@ -240,25 +221,23 @@ and renders the template with the retrieved data. Here's an example view for
         context = {'year': year, 'article_list': a_list}
         return render(request, 'news/year_archive.html', context)
 
-This example uses Django's :doc:`template system </topics/templates>`, which has
+This example uses Django's [template system](../topics/templates.txt), which has
 several powerful features but strives to stay simple enough for non-programmers
 to use.
 
-Design your templates
-=====================
+## Design your templates
 
 The code above loads the ``news/year_archive.html`` template.
 
 Django has a template search path, which allows you to minimize redundancy among
 templates. In your Django settings, you specify a list of directories to check
-for templates with :setting:`DIRS <TEMPLATES-DIRS>`. If a template doesn't exist
+for templates with `DIRS <TEMPLATES-DIRS>`. If a template doesn't exist
 in the first directory, it checks the second, and so on.
 
 Let's say the ``news/year_archive.html`` template was found. Here's what that
 might look like:
 
-.. code-block:: html+django
-    :caption: ``mysite/news/templates/news/year_archive.html``
+
 
     {% extends "base.html" %}
 
@@ -284,9 +263,9 @@ character). This is called a template filter, and it's a way to filter the value
 of a variable. In this case, the date filter formats a Python datetime object in
 the given format (as found in PHP's date function).
 
-You can chain together as many filters as you'd like. You can write :ref:`custom
-template filters <howto-writing-custom-template-filters>`. You can write
-:doc:`custom template tags </howto/custom-template-tags>`, which run custom
+You can chain together as many filters as you'd like. You can write 
+custom template filters. You can write
+[custom template tags](../howto/custom-template-tags.txt), which run custom
 Python code behind the scenes.
 
 Finally, Django uses the concept of "template inheritance". That's what the
@@ -295,11 +274,9 @@ Finally, Django uses the concept of "template inheritance". That's what the
 following blocks." In short, that lets you dramatically cut down on redundancy
 in templates: each template has to define only what's unique to that template.
 
-Here's what the "base.html" template, including the use of :doc:`static files
-</howto/static-files/index>`, might look like:
+Here's what the "base.html" template, including the use of [static files](../howto/static-files/index.txt)
+, might look like:
 
-.. code-block:: html+django
-    :caption: ``mysite/templates/base.html``
 
     {% load static %}
     <html>
@@ -329,23 +306,22 @@ abstraction layer, you can read XML files, you can read files off disk, or
 anything you want. Each piece of Django -- models, views, templates -- is
 decoupled from the next.
 
-This is just the surface
-========================
+## This is just the surface
 
 This has been only a quick overview of Django's functionality. Some more useful
 features:
 
-* A :doc:`caching framework </topics/cache>` that integrates with memcached
+* A [caching framework](../topics/cache.txt) that integrates with memcached
   or other backends.
 
-* A :doc:`syndication framework </ref/contrib/syndication>` that lets you
+* A [syndication framework](../ref/contrib/syndication.txt) that lets you
   create RSS and Atom feeds by writing a small Python class.
 
 * More attractive automatically-generated admin features -- this overview
   barely scratched the surface.
 
-The next steps are for you to `download Django`_, read :doc:`the tutorial
-</intro/tutorial01>` and join `the community`_. Thanks for your interest!
+The next steps are for you to `download Django`_, read [the tutorial](../intro/tutorial01.md)
+ and join the community. Thanks for your interest!
 
-.. _download Django: https://www.djangoproject.com/download/
-.. _the community: https://www.djangoproject.com/community/
+[1] [download Django](https://www.djangoproject.com/download/)\
+[2] [the community](https://www.djangoproject.com/community/)
